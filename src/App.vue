@@ -2,6 +2,7 @@
   <h1>Vue Sorting Viz</h1>
 
   <button @click="insertionSort()">Insertion sort</button>
+  <button @click="bubbleSort()">Bubble sort</button>
   <button @click="fillArray()">Shuffle</button>
 
   <div class="container">
@@ -49,8 +50,23 @@ export default {
         await this.sleep();
       }
     },
+    async bubbleSort(): Promise<void> {
+      let swapped = true
+
+      while (swapped) {
+        swapped = false
+
+        for (let i = 0; i < this.array.length - 1; i++) {
+          if (this.array[i] > this.array[i + 1]) {
+            [this.array[i], this.array[i + 1]] = [this.array[i + 1], this.array[i]]
+            await this.sleep();
+            swapped = true
+          }
+        }
+      }
+    },
     sleep(): Promise<void> {
-      return new Promise((resolve) => setTimeout(resolve, 100));
+      return new Promise((resolve) => setTimeout(resolve, 20));
     }
   }
 }
@@ -69,7 +85,6 @@ button {
 .container {
   position: fixed;
   left: 50px;
-  margin-top: 20px;
 }
 
 .bar {
