@@ -1,96 +1,92 @@
 <template>
-  <h1>Vue Sorting Viz</h1>
+    <h1>Vue Sorting Viz</h1>
 
-  <button @click="insertionSort()">Insertion sort</button>
-  <button @click="bubbleSort()">Bubble sort</button>
-  <button @click="fillArray()">Shuffle</button>
+    <button @click="insertionSort">Insertion sort</button>
+    <button @click="bubbleSort">Bubble sort</button>
+    <button @click="fillArray">Shuffle</button>
 
-  <div class="container">
-    <span class="bar" v-for="(number, index) in array" :key="index" :style="{ height: `${number / 1.5}px` }" />
-  </div>
+    <div class="container">
+        <span class="bar" v-for="(number, index) in array" :key="index" :style="{ height: `${number / 1.5}px` }" />
+    </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 
-interface ArrayData {
-  array: number[];
-  size: number;
+import { onBeforeMount, ref } from 'vue';
+
+const size = ref<number>(40);
+const array = ref<number[]>([])
+
+const fillArray = (): void => {
+    array.value = [];
+
+    for (let i = 0; i < size.value; i++) {
+        array.value.push(getRandInt(5, 590));
+    }
 }
 
-export default {
-  data(): ArrayData {
-    return {
-      array: [],
-      size: 40
-    }
-  },
-  created(): void {
-    this.fillArray();
-  },
-  methods: {
-    fillArray(): void {
-      this.array = [];
+const getRandInt = (min: number, max: number): number => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-      for (let i = 0; i < this.size; i++) {
-        this.array.push(this.getRandInt(5, 590));
-      }
-    },
-    getRandInt(min: number, max: number): number {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    },
-    async insertionSort(): Promise<void> {
-      for (let i = 1; i < this.size; i++) {
-        let elt = this.array[i];
+const insertionSort = async (): Promise<void> => {
+    for (let i = 1; i < size.value; i++) {
+        let elt = array.value[i];
         let place;
 
-        for (place = i; place > 0 && this.array[place - 1] > elt; place--) {
-          this.array[place] = this.array[place - 1];
+        for (place = i; place > 0 && array.value[place - 1] > elt; place--) {
+            array.value[place] = array.value[place - 1];
         }
-        this.array[place] = elt;
-        await this.sleep();
-      }
-    },
-    async bubbleSort(): Promise<void> {
-      let swapped = true
+        array.value[place] = elt;
+        await sleep();
+    }
+}
 
-      while (swapped) {
+const bubbleSort = async (): Promise<void> => {
+    let swapped = true
+
+    while (swapped) {
         swapped = false
 
-        for (let i = 0; i < this.array.length - 1; i++) {
-          if (this.array[i] > this.array[i + 1]) {
-            [this.array[i], this.array[i + 1]] = [this.array[i + 1], this.array[i]]
-            await this.sleep();
-            swapped = true
-          }
+        for (let i = 0; i < array.value.length - 1; i++) {
+            if (array.value[i] > array.value[i + 1]) {
+                [array.value[i], array.value[i + 1]] = [array.value[i + 1], array.value[i]]
+                await sleep();
+                swapped = true
+            }
         }
-      }
-    },
-    sleep(): Promise<void> {
-      return new Promise((resolve) => setTimeout(resolve, 20));
     }
-  }
 }
+
+const sleep = (): Promise<void> => {
+    return new Promise((resolve) => setTimeout(resolve, 20));
+}
+
+onBeforeMount(() => {
+    fillArray();
+})
 </script>
 
 <style>
 #app {
-  text-align: center;
-  color: #2c3e50;
+    text-align: center;
+    color: #2c3e50;
 }
 
 button {
-  margin-right: 5px;
+    margin-right: 5px;
 }
 
 .container {
-  position: fixed;
-  left: 50px;
+    margin-top: 2%;
+    position: fixed;
+    left: 50px;
 }
 
 .bar {
-  width: 20px;
-  background-color: black;
-  display: inline-block;
-  margin: 0 4px;
+    width: 20px;
+    background-color: black;
+    display: inline-block;
+    margin: 0 4px;
 }
 </style>
